@@ -19,9 +19,8 @@ class QuestionSerializer(serializers.ModelSerializer):
         for choice_data in choices_data:
             Choice.objects.create(question=question, **choice_data)
         return question
-
 class QuizSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True, read_only=True)  # Change this line
+    questions = QuestionSerializer(many=True)  # Allow nested data for questions
 
     class Meta:
         model = Quiz
@@ -36,3 +35,4 @@ class QuizSerializer(serializers.ModelSerializer):
             for choice_data in choices_data:
                 Choice.objects.create(question=question, **choice_data)
         return quiz
+
