@@ -29,7 +29,6 @@ def quiz_detail(request, quiz_code):  # Update argument name to match URL config
 
     serializer = QuizSerializer(quiz)
     return Response(serializer.data)
-
 @api_view(['GET'])
 def questions_by_quiz(request, quiz_code):
     try:
@@ -43,17 +42,16 @@ def questions_by_quiz(request, quiz_code):
     for question in questions:
         question_data = {
             'question': question.question_text,
-            'choices': []
+            'correct_answer': None,
+            'other_choices': []
         }
         
         choices = Choice.objects.filter(question=question)
         for choice in choices:
-            choice_data = {
-                'id': choice.id,
-                'choice_text': choice.choice_text,
-                'is_correct': choice.is_correct
-            }
-            question_data['choices'].append(choice_data)
+            if choice.is_correct:
+                question_data['correct_answer'] = choice.choice_text
+            else:
+                question_data['other_choices'].append(choice.choice_text)
             
         questions_data.append(question_data)
     
