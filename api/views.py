@@ -6,11 +6,10 @@ from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
 
 @api_view(['GET', 'POST'])
 def quizzes(request):
-    if request.method == 'GET':
-        quizzes = Quiz.objects.all()
+    if request.method == "GET":
+        quizzes = Quiz.objects.prefetch_related('question_set__choice_set').all()
         serializer = QuizSerializer(quizzes, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
         quiz_serializer = QuizSerializer(data=request.data)
         if quiz_serializer.is_valid():
