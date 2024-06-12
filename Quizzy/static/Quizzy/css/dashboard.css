@@ -1,0 +1,84 @@
+
+
+.custom-container {
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 20px auto;
+    display: inline-block;
+}
+
+.stats {
+    font-size: 2rem;
+    margin: 20px 0;
+}
+
+.cta-buttons {
+    margin: 20px 0;
+}
+
+.cta-buttons .btn {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+}
+
+#navOverlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+#navOverlay ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    margin-top: 20%;
+}
+
+#navOverlay ul li {
+    margin: 20px 0;
+}
+
+#navOverlay ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+#navOverlay .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: white;
+}
+
+#navOverlay .arrow-wrapper .arrow {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(45deg);
+    margin-left: 10px;
+}
+
+/* Adjust chart colors for better visibility on dark background */
+.chart-container canvas {
+    background-color: rgba(255, 255, 255, 0.1);
+}

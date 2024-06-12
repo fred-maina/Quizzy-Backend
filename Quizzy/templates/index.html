@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{%load static%}
+
+{% block title %}Home - Quizzy{% endblock %}
+
+{% block content %}
+<section id="home" class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <main id="description">
+                    <p>Welcome to Quizzy - Where Learning Meets Fun!</p>
+                    <p>Test your knowledge with our wide range of quizzes, or create and share your own. You can even create gradable quizzes and track progress. Start learning and quizzing with Quizzy today!</p>
+                    <button id="callToAction" class="btn btn-primary">Create Account</button>
+                </main>
+            </div>
+            <div class="col-md-6">
+                <aside id="secondaryLogo">
+                    <img src="{% static 'Quizzy/images/SecondaryLogo.png' %}" alt="SecondaryLogo" class="img-fluid">
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
