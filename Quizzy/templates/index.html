@@ -11,7 +11,10 @@
                 <main id="description">
                     <p>Welcome to Quizzy - Where Learning Meets Fun!</p>
                     <p>Test your knowledge with our wide range of quizzes, or create and share your own. You can even create gradable quizzes and track progress. Start learning and quizzing with Quizzy today!</p>
-                    <button id="callToAction" class="btn btn-primary">Create Account</button>
+                    <button id="callToAction" class="btn btn-primary">
+                        <a href="{% url 'login' %}" class="no-decoration text-white">Create Account</a>
+                    </button>
+                    
                 </main>
             </div>
             <div class="col-md-6">
