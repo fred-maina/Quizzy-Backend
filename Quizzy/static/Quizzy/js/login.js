@@ -70,21 +70,17 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         alert(error.message);
     });
 });
-
-// Login form submission
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
     const csrftoken = getCSRFToken();
 
-    // Prepare login payload
     const loginPayload = {
         username: email,
         password: password
     };
 
-    // Perform fetch request to login endpoint
     fetch('/authenticate/login/', {
         method: 'POST',
         headers: {
@@ -101,7 +97,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .then(data => {
         console.log('Login success data:', data);
-        document.cookie = `access=${data.access}; path=/; httponly`;
+        document.cookie = `access=${data.access}; path=/; Secure; SameSite=Lax;`;
         window.location.href = '/dashboard/'; // Redirect to dashboard after successful login
     })
     .catch(error => {
