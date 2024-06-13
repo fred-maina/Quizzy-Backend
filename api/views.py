@@ -76,7 +76,11 @@ def questions_by_quiz(request, quiz_code):
         'questions': questions_data
     }
     return Response(response_data)
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create(request):
     questions = request.data.pop('questions')
     choices = []
