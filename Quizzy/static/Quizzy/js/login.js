@@ -51,14 +51,16 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         body: JSON.stringify(signupPayload)
     })
     .then(response => {
+        console.log('Response status:', response.status);
         if (!response.ok) {
-            throw new Error('Signup failed');
+            throw new Error('Signup failed with status ' + response.status);
         }
         return response.json();
     })
     .then(data => {
         console.log('Signup success data:', data);
-        if (data.id) {
+        // Check for username instead of id
+        if (data.username) {
             alert('Signup successful');
             document.getElementById('toggle-login').click(); // Switch to login form
         } else {
@@ -70,6 +72,9 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         alert(error.message);
     });
 });
+
+
+// Login form submission
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const email = document.getElementById('email').value.trim();
