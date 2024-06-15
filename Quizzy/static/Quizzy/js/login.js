@@ -55,24 +55,47 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
         if (!response.ok) {
             throw new Error('Signup failed with status ' + response.status);
         }
-        return response.json();
+        return response.json(); // Parse JSON response
     })
     .then(data => {
         console.log('Signup success data:', data);
-        // Check for username instead of id
-        if (data.username) {
-            alert('Signup successful');
-            document.getElementById('toggle-login').click(); // Switch to login form
+        // Check for required fields in the response
+        if (data.username && data.email) {
+            // Proceed to login after successful signup
+            const loginPayload = {
+                username: email,
+                password: password
+            };
+
+            return fetch('/authenticate/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(loginPayload)
+            });
         } else {
-            throw new Error('Signup failed: Unknown error');
+            throw new Error('Signup failed: Missing username or email in response');
         }
     })
+    .then(response => {
+        console.log('Login response status:', response.status);
+        if (!response.ok) {
+            throw new Error('Login after signup failed');
+        }
+        return response.json(); // Parse JSON response
+    })
+    .then(data => {
+        console.log('Login success data:', data);
+        document.cookie = `access=${data.access}; path=/; Secure; SameSite=Lax;`;
+        window.location.href = '/dashboard/'; // Redirect to dashboard after successful login
+    })
     .catch(error => {
-        console.error('Signup error:', error);
-        alert(error.message);
+        console.error('Signup or login error:', error);
+        alert('Signup or login failed: ' + error.message);
     });
 });
-
 
 // Login form submission
 document.getElementById('loginForm').addEventListener('submit', function(event) {
@@ -86,6 +109,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         password: password
     };
 
+    // Perform login request
     fetch('/authenticate/login/', {
         method: 'POST',
         headers: {
@@ -95,10 +119,11 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         body: JSON.stringify(loginPayload)
     })
     .then(response => {
+        console.log('Login response status:', response.status);
         if (!response.ok) {
             throw new Error('Login failed');
         }
-        return response.json();
+        return response.json(); // Parse JSON response
     })
     .then(data => {
         console.log('Login success data:', data);

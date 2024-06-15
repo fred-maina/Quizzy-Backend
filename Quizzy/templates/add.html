@@ -1,0 +1,120 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzy Landing Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{%static 'Quizzy/css/style.css'%}">
+    <link rel="stylesheet" href="{%static 'Quizzy/css/dashboard.css'%}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{%static 'Quizzy/images/MainLogo.png'%}" alt="Logo" class="logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item navbar-profile">
+                        <img src="https://via.placeholder.com/30" alt="Profile Icon">
+                        <button id="sign-out">
+                            Sign Out
+                            <div class="arrow-wrapper">
+                                <div class="arrow"></div>
+                            </div>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Overlay for small screen nav -->
+    <div id="navOverlay">
+        <span class="close-btn" onclick="toggleNav()">×</span>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact-us</a></li>
+            <li><a href="#">FAQ's</a></li>
+        </ul>
+    </div>
+
+    <!-- Quiz Creation Form -->
+    <!-- quiz_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Quiz</title>
+    <!-- Include Bootstrap CSS (assuming you are using Bootstrap) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Create a Quiz</h2>
+        <form id="quizForm" method="post" action="{% url 'add_quiz' %}">
+            {% csrf_token %}
+            <div id="questionsContainer">
+                <div class="mb-3 question-item">
+                    <label for="quizName" class="form-label">Quiz Name</label>
+                    <input type="text" class="form-control" id="quizName" name="quizName" placeholder="Enter quiz name" required>
+                </div>
+                <div class="mb-3 question-item">
+                    <label for="quizDescription" class="form-label">Quiz Description</label>
+                    <input type="text" class="form-control" id="quizDescription" name="quizDescription" placeholder="Enter Description" required>
+                </div>
+                <div class="question-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label">Question 1</label>
+                        <button type="button" class="delete-btn delete-question" style="max-height: 36px; max-width: fit-content; background-color: brown;">delete question &times; </button>
+                    </div>
+                    <input type="text" class="form-control mb-2 question-text" name="question-0-text" placeholder="Enter question text" required>
+                    <div class="choices-container">
+                        <div class="input-group mb-2 choice-item">
+                            <input type="text" class="form-control" name="question-0-choice-0-text" placeholder="Enter choice text" required>
+                            <div class="input-group-text">
+                                <input type="checkbox" name="question-0-choice-0-correct" aria-label="Correct choice" required>
+                            </div>
+                            <button type="button" class="delete-btn delete-choice" style="max-height: 36px; max-width: 10px; background-color: red;"> &times;</button>
+                        </div>
+                        <div class="input-group mb-2 choice-item">
+                            <input type="text" class="form-control" name="question-0-choice-1-text" placeholder="Enter choice text" required>
+                            <div class="input-group-text">
+                                <input type="checkbox" name="question-0-choice-1-correct" aria-label="Correct choice" required>
+                            </div>
+                            <button type="button" class="delete-btn delete-choice" style="max-height: 36px; max-width: 10px; background-color: red;"> &times;</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary add-choice">Add another choice</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" id="addQuestion">Add another question</button>
+            <button type="submit" class="btn btn-success mt-3">Save and Create Quiz</button>
+            <button type="button" class="btn btn-danger mt-3" id="cancelQuiz">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Include jQuery and Bootstrap JS (assuming you are using these for dynamic functionality) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add dynamic functionality here if needed
+    </script>
+</body>
+</html>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{%static 'Quizzy/js/add.js'%}"></script>
+</body>
+</html>

@@ -20,6 +20,30 @@
         <a href="#" class="btn btn-primary">Create a New Quiz</a>
         <a href="#" class="btn btn-secondary">Take a Quiz</a>
     </div>
+    <div class="quizData">
+        {% if quizzes %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date Created</th>
+                    <th>Quiz Name</th>
+                    <th>Quiz Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz in quizzes %}
+                <tr>
+                    <td>{{ quiz.date_created }}</td>
+                    <td>{{ quiz.quiz_name }}</td>
+                    <td>{{ quiz.quiz_code }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No quizzes created yet.</p>
+        {% endif %}
+    </div>
     <div class="row justify-content-center">
         <div class="chart-container">
             <canvas id="categoriesChart"></canvas>
