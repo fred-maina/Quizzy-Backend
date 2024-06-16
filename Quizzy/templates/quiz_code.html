@@ -13,9 +13,17 @@
         <h2>Quiz Created Successfully</h2>
         <p>Your quiz has been successfully created!</p>
         <p>Quiz Code: <strong>{{ quiz_code }}</strong></p>
-        <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+        <a id="Dashboard" class="btn btn-primary">Back to Dashboard</a>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    const Dashboard = document.getElementById("Dashboard");
+    Dashboard.addEventListener("click", () => {
+        window.location.href = "/dashboard/";
+    });
+});
 
+    </script>
     <!-- Include Bootstrap JS (assuming you are using Bootstrap) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
