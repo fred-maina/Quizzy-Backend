@@ -37,7 +37,9 @@ The Quizzy API allows users to manage quizzes, questions, and choices through a 
 
 ```json
 {
-  "quiz_name": "Sample Quiz",
+  "title": "Sample Quiz",
+  "description":"Enter your description here"
+
   "questions": [
     {
       "question_text": "What is 2 + 2?",
