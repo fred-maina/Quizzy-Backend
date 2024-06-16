@@ -17,7 +17,7 @@
         <p>Total Quizzes on Platform: <span id="totalQuizzes">1200</span></p>
     </div>
     <div class="cta-buttons">
-        <a href="#" class="btn btn-primary">Create a New Quiz</a>
+        <a href="#" id=CreateQuiz class="btn btn-primary">Create a New Quiz</a>
         <a href="#" class="btn btn-secondary">Take a Quiz</a>
     </div>
     <div class="quizData">
@@ -84,5 +84,14 @@
             data: categoriesData
         });
     });
+    document.addEventListener("DOMContentLoaded",()=>{
+        createQuiz=document.getElementById("CreateQuiz")
+        createQuiz.addEventListener("click",
+        ()=>{
+            window.location=("/add/")
+        })
+    }
+    
+    )
 </script>
 {% endblock %}
