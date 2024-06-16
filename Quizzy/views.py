@@ -48,10 +48,11 @@ def login(request):
 def dashboard(request):
     return render(request, "dashboard.html")
 
-
+@jwt_auth_required
 def add(request):
-    if request.method =="GET":
-        render(request,"add.html")
+    if request.method == "GET":
+        return render(request, "add.html")
+    
     if request.method == 'POST':
         try:
             quiz_name = request.POST.get('quizName', '')
@@ -105,17 +106,24 @@ def add(request):
             # Example: POST to API (replace with your actual API endpoint)
             api_url = 'http://127.0.0.1:8000/api/create/'  # Adjust with your actual API endpoint
             
-            response = requests.post(api_url, json=quiz_data)
+            # Get access token from cookies
+            access_token = request.COOKIES.get('access', '')
+            
+            headers = {
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json'
+            }
+            
+            response = requests.post(api_url, headers=headers, json=quiz_data)
             
             # Check API response
             if response.status_code == 201:
                 try:
                     api_response = response.json()
-                    quiz_code = api_response
+                    quiz_code = api_response.get('quiz_code', 'N/A')
                     return render(request, 'quiz_code.html', {'quiz_code': quiz_code})
                 except json.JSONDecodeError as e:
                     return JsonResponse({'success': False, 'error': 'Invalid JSON response from API'})
-            
             else:
                 return JsonResponse({'success': False, 'error': f'Failed to create quiz. API returned status code: {response.status_code}'})
         

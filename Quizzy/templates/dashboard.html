@@ -50,6 +50,20 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div id="quizCodeModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Enter Quiz Code</h2>
+        <form id="quizCodeForm">
+            <label for="quizCodeInput">Quiz Code:</label>
+            <input type="text" id="quizCodeInput" name="quiz_code" required>
+            <button type="submit" class="btn btn-primary">Take Quiz</button>
+        </form>
+    </div>
+</div>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -91,7 +105,41 @@
             window.location=("/add/")
         })
     }
-    
     )
+    document.addEventListener("DOMContentLoaded", function() {
+    const takeQuizButton = document.querySelector('.btn-secondary');
+    const modal = document.getElementById('quizCodeModal');
+    const closeBtn = document.querySelector('.close');
+
+    // Show modal when 'Take a Quiz' button is clicked
+    takeQuizButton.addEventListener('click', function() {
+        modal.style.display = 'block';
+    });
+
+    // Close the modal when the close button or outside modal is clicked
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Handle form submission
+    const quizCodeForm = document.getElementById('quizCodeForm');
+    quizCodeForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const quizCode = document.getElementById('quizCodeInput').value;
+        // You can perform further actions like sending the quiz code to your Django view via AJAX
+        console.log('Quiz Code entered:', quizCode);
+        // Optionally, close the modal after submission
+        modal.style.display = 'none';
+    });
+});
+
+    
 </script>
+
 {% endblock %}

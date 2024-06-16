@@ -127,8 +127,20 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     })
     .then(data => {
         console.log('Login success data:', data);
-        document.cookie = `access=${data.access}; path=/; Secure; SameSite=Lax;`;
-        window.location.href = '/dashboard/'; // Redirect to dashboard after successful login
+        // Example expiration times from Django
+        const ACCESS_TOKEN_LIFETIME_SECONDS = 5 * 60;  // 5 minutes in seconds
+        const REFRESH_TOKEN_LIFETIME_SECONDS = 3 * 24 * 60 * 60;  // 3 days in seconds
+
+        function setCookie(name, value, maxAgeSeconds) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (maxAgeSeconds * 1000)); // Convert seconds to milliseconds
+            document.cookie = `${name}=${value}; path=/; Secure; SameSite=Lax; expires=${expires.toUTCString()};`;
+        }
+
+        setCookie('access', data.access, ACCESS_TOKEN_LIFETIME_SECONDS);
+        setCookie('refresh', data.refresh, REFRESH_TOKEN_LIFETIME_SECONDS);
+        window.location="/dashboard/"
+
     })
     .catch(error => {
         console.error('Login error:', error);
