@@ -1,18 +1,20 @@
 import uuid
-from django.db import models
 
- 
+from django.db import models
+from django.contrib.auth.models import User  # Import Django's User model
+
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # Added ForeignKey to User
+
     def __str__(self):
         return str(self.title)
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE,related_name="quiz_questions")  # ForeignKey relationship with Quiz
     question_text = models.CharField(max_length=255)
-
     def __str__(self):
         return self.question_text
 

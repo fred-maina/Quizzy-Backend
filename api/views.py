@@ -80,22 +80,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['POST'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])  # Ensure user is authenticated
 def create(request):
-    questions = request.data.pop('questions')
-    choices = []
-    for question in questions:
-        choices.append(question.pop('choices'))
-    quiz_serializer = QuizSerializer(data=request.data)
+    # Retrieve questions and choices from request data
+    questions = request.data.pop('questions', [])
+    choices = [question.pop('choices', []) for question in questions]
+    
+    # Add user information to the quiz data
+    quiz_data = request.data
+    quiz_data['created_by'] = request.user.id  # Assign the logged-in user's ID to created_by
+    
+    # Serialize and save the Quiz object
+    quiz_serializer = QuizSerializer(data=quiz_data)
     if quiz_serializer.is_valid():
         quiz = quiz_serializer.save()
+        
+        # Process each question and its choices
         for question, choice_list in zip(questions, choices):
-            question["quiz"] = quiz.id
+            question['quiz'] = quiz.id  # Assign quiz ID to each question
             question_serializer = QuestionSerializer(data=question)
             if question_serializer.is_valid():
                 saved_question = question_serializer.save()
+                
+                # Process each choice for the current question
                 for choice in choice_list:
-                    choice["question"] = saved_question.id
+                    choice['question'] = saved_question.id  # Assign question ID to each choice
                     choice_serializer = ChoiceSerializer(data=choice)
                     if choice_serializer.is_valid():
                         choice_serializer.save()
@@ -103,5 +112,7 @@ def create(request):
                         print(choice_serializer.errors)
             else:
                 print(question_serializer.errors)
-        return Response(quiz.code, status=status.HTTP_201_CREATED)
-    return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'quiz_code': quiz.code}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
