@@ -123,4 +123,4 @@ def add(request):
             return JsonResponse({'success': False, 'error': str(e)})
     
     # Handle other HTTP methods or initial rendering of the form
-    return render(request, 'quiz_form.html')
+    return render(request, 'add.html')
