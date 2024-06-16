@@ -1,12 +1,19 @@
-import uuid
-
 from django.db import models
+import random
+import string
 from django.contrib.auth.models import User  # Import Django's User model
+def generate_unique_alphanumeric_code(length=6):
+    '''A function that generates a unique code that will be displayed back to the user.'''
+    while True:
+        code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+        if not Quiz.objects.filter(code=code).exists():
+            return code
+
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    code = models.CharField(max_length=6, default=generate_unique_alphanumeric_code, editable=False, unique=True)   
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # Added ForeignKey to User
 
     def __str__(self):
