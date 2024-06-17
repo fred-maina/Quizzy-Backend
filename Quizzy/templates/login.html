@@ -6,6 +6,7 @@
 <meta name="csrf-token" content="{{ csrf_token }}">
 
 <div class="container mt-5">
+    {{ error_message }}
     <div id="login-form" class="login-form mx-auto p-4 border rounded bg-white">
         <div class="text-center">
             <img src="{% static 'Quizzy/images/SecondaryLogo.png' %}" alt="Logo" class="form-logo">
