@@ -13,7 +13,8 @@ def generate_unique_alphanumeric_code(length=6):
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    code = models.CharField(max_length=6, default=generate_unique_alphanumeric_code, editable=False, unique=True)   
+    code = models.CharField(max_length=6, default=generate_unique_alphanumeric_code, editable=False, unique=True)
+    date_created=models.DateTimeField(auto_now_add=True)  
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # Added ForeignKey to User
 
     def __str__(self):
