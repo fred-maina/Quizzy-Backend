@@ -149,3 +149,38 @@
 .btn-primary:hover {
     background-color: #0056b3;
 }
+.quiz-table {
+    width: 100%;
+    max-width: 800px; /* Adjust the maximum width as per your design */
+    margin: 20px auto; /* Center the table and provide spacing */
+    border-collapse: collapse;
+    box-shadow: 0 0 15px rgba(226, 222, 222, 0.4); /* Add a stronger glowing box shadow */
+    font-family: Arial, sans-serif; /* Change font family */
+}
+
+.quiz-table th,
+.quiz-table td {
+    padding: 10px; /* Increase padding for better spacing */
+    text-align: center; /* Center align text */
+    border: 1px solid #333333; /* Dark gray border for cells */
+}
+
+.quiz-table th {
+    background-color: #003366; /* Dark Blue background for headers */
+    font-weight: bold;
+    color: #FFFFFF; /* White header text color */
+}
+
+.quiz-table tbody tr:nth-child(even) {
+    background-color: #3f99a5; /* Light Blue alternate row background color */
+}
+
+
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+    .quiz-table {
+        font-size: 14px; /* Smaller font size for smaller screens */
+    }
+}
+
