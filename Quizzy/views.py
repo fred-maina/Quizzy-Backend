@@ -57,9 +57,10 @@ def login(request):
 
 @jwt_auth_required
 def dashboard(request):
-    user = request.user.first_name
+    user = request.user
+    quizzes = Quiz.objects.filter(created_by=user.id)
     print(user)
-    return render(request, "dashboard.html", {"user": user})
+    return render(request, "dashboard.html", {"user": user.first_name,"quizzes":quizzes})
 
 
 @jwt_auth_required
