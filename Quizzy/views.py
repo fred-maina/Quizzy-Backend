@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from rest_framework_simplejwt.tokens import AccessToken
 from datetime import datetime, timedelta
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 from rest_framework_simplejwt.tokens import AccessToken
@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import requests
 import json
-from api.models import Quiz
+from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
 
@@ -148,3 +148,66 @@ def add(request):
 
     # Handle other HTTP methods or initial rendering of the form
     return render(request, 'add.html')
+
+
+@jwt_auth_required
+def display_quiz(request, quiz_code):
+    access_token = request.COOKIES.get('access', '')
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+    api_url = f'{settings.BASE_URL}/api/quizzes/{quiz_code}/questions/'  # Adjust BASE_URL as per your settings
+    response = requests.get(api_url, headers=headers)
+    
+    if response.status_code == 200:
+        try:
+            quiz_data = response.json()
+            questions_data = quiz_data.get('questions', [])
+
+            # Fetch quiz metadata using Quiz model
+            quiz = get_object_or_404(Quiz, code=quiz_code)
+            quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')  # Format creation date as needed
+            quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"  # Combine first and last name
+            print(quiz.created_by.first_name)
+            # Prepare context for rendering quiz display template
+            context = {
+                'quiz_code': quiz_code,
+                'title':quiz.title,
+                'description':quiz.description,
+                'questions': questions_data,
+                'quiz_creation_date': quiz_creation_date,
+                'quiz_creator_name': quiz_creator_name
+            }
+            return render(request, 'quiz.html', context)
+        except Exception as e:
+            return HttpResponse(f"Error fetching or parsing quiz data: {e}", status=500)
+    else:
+        return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}", status=response.status_code)
+
+def finalscore(request):
+    if request.method == 'POST':
+    # Get the correct answers and number of questions from the session
+     correct_answers = request.session.get('correct_answers')
+     number_of_questions = int(request.session.get('number_of_questions', 0))
+        # Initialize variables for correct and total questions
+    correct_questions = 0
+
+        # Iterate over each question and compare the selected answer with the correct answer
+    for question, correct_answer in correct_answers.items():
+        selected_answer = request.POST.get(question)
+        if selected_answer == correct_answer:
+            correct_questions += 1
+
+        # Calculate the percentage of correct questions
+        percentage = int((correct_questions / number_of_questions) * 100 if number_of_questions != 0 else 0)
+
+        # Pass the score data to the template
+        context = {
+            'total_questions': number_of_questions,
+            'correct_questions': correct_questions,
+            'percentage': percentage
+        }
+        return render(request, 'finalscore.html', context)
+    else:
+        return render(request, 'index.html')  # R
