@@ -128,7 +128,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(data => {
         console.log('Login success data:', data);
         // Example expiration times from Django
-        const ACCESS_TOKEN_LIFETIME_SECONDS = 5 * 60;  // 5 minutes in seconds
+        const ACCESS_TOKEN_LIFETIME_SECONDS = 5 * 24*60*60;  // 5 minutes in seconds
         const REFRESH_TOKEN_LIFETIME_SECONDS = 3 * 24 * 60 * 60;  // 3 days in seconds
 
         function setCookie(name, value, maxAgeSeconds) {
