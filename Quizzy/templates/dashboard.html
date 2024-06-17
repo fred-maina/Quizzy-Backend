@@ -10,7 +10,7 @@
 <!-- Main Content -->
 <div class="container custom-container">
     <div class="text-center">
-        <h1>Welcome to Quizzy!</h1>
+        <h1>Welcome {{ user }} to Quizzy!</h1>
         <p>Choose either of the options below to continue with Quizzy</p>
     </div>
     <div class="stats">
@@ -55,7 +55,8 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Enter Quiz Code</h2>
-        <form id="quizCodeForm">
+        <form id="quizCodeForm" method="post" action="/">
+            {% csrf_token %}
             <label for="quizCodeInput">Quiz Code:</label>
             <input type="text" id="quizCodeInput" name="quiz_code" required>
             <button type="submit" class="btn btn-primary">Take Quiz</button>
