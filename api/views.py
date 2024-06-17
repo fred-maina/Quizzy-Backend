@@ -1,11 +1,13 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Quiz, Question, Choice
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
 from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def quizzes(request):
     if request.method == "GET":
         quizzes = Quiz.objects.all()
@@ -36,6 +38,7 @@ def quizzes(request):
         }
         return Response(response_data)
 @api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def quiz_detail(request, quiz_code):  # Update argument name to match URL configuration
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -45,6 +48,7 @@ def quiz_detail(request, quiz_code):  # Update argument name to match URL config
     serializer = QuizSerializer(quiz)
     return Response(serializer.data)
 @api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def questions_by_quiz(request, quiz_code):
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -76,8 +80,6 @@ def questions_by_quiz(request, quiz_code):
         'questions': questions_data
     }
     return Response(response_data)
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  # Ensure user is authenticated
