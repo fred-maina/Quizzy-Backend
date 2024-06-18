@@ -170,6 +170,13 @@ def display_quiz(request, quiz_code):
             quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')  # Format creation date as needed
             quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"  # Combine first and last name
             print(quiz.created_by.first_name)
+            print(questions_data)
+            for question in questions_data:
+                correct_answer = question.pop('correct_answer')
+                other_choices = question.pop('other_choices')
+                choices= [correct_answer] + other_choices
+                question["choices"]=choices
+            print(questions_data)
             # Prepare context for rendering quiz display template
             context = {
                 'quiz_code': quiz_code,
@@ -185,29 +192,25 @@ def display_quiz(request, quiz_code):
     else:
         return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}", status=response.status_code)
 
-'''def finalscore(request):
+def leaderboard(request):
     if request.method == 'POST':
-    # Get the correct answers and number of questions from the session
-     correct_answers = request.session.get('correct_answers')
-     number_of_questions = int(request.session.get('number_of_questions', 0))
-        # Initialize variables for correct and total questions
-    correct_questions = 0
+        correct_answers = request.session.get('correct_answers')
+        number_of_questions = int(request.session.get('number_of_questions', 0))
+        correct_questions = 0# Iterate over each question and compare the selected answer with the correct answer
+        for question, correct_answer in correct_answers.items():
+            selected_answer = request.POST.get(question)
+            if selected_answer == correct_answer:
+                correct_questions += 1
 
-        # Iterate over each question and compare the selected answer with the correct answer
-    for question, correct_answer in correct_answers.items():
-        selected_answer = request.POST.get(question)
-        if selected_answer == correct_answer:
-            correct_questions += 1
+            # Calculate the percentage of correct questions
+            percentage = int((correct_questions / number_of_questions) * 100 if number_of_questions != 0 else 0)
 
-        # Calculate the percentage of correct questions
-        percentage = int((correct_questions / number_of_questions) * 100 if number_of_questions != 0 else 0)
-
-        # Pass the score data to the template
-        context = {
-            'total_questions': number_of_questions,
-            'correct_questions': correct_questions,
-            'percentage': percentage
-        }
-        return render(request, 'finalscore.html', context)
-    else:
-        return render(request, 'index.html')  # R'''
+            # Pass the score data to the template
+            context = {
+                'total_questions': number_of_questions,
+                'correct_questions': correct_questions,
+                'percentage': percentage
+            }
+            return render(request, 'finalscore.html', context)
+        else:
+         return render(request, 'index.html')  # R'''
