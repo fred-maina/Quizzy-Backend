@@ -32,7 +32,6 @@ def login(request):
                 'access': str(refresh.access_token),
             })
             response.set_cookie('access', str(refresh.access_token), httponly=True)
-            response['Location'] = '/dashboard/'  # Or your actual dashboard URL
             return response
         return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
