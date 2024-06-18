@@ -185,7 +185,7 @@ def display_quiz(request, quiz_code):
     else:
         return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}", status=response.status_code)
 
-def finalscore(request):
+'''def finalscore(request):
     if request.method == 'POST':
     # Get the correct answers and number of questions from the session
      correct_answers = request.session.get('correct_answers')
@@ -210,4 +210,4 @@ def finalscore(request):
         }
         return render(request, 'finalscore.html', context)
     else:
-        return render(request, 'index.html')  # R
+        return render(request, 'index.html')  # R'''

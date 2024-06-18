@@ -38,7 +38,7 @@
             <h2>Quiz Created Successfully</h2>
             <p>Your quiz has been successfully created!</p>
             <p>Quiz Code: <strong>{{ quiz_code }}</strong></p>
-            <p>Quiz Link: <a href="/quiz/{{ quiz_code }}" id="quiz-link">example.com/quiz/{{ quiz_code }}</a></p>
+            <p>Quiz Link: <a href="/quiz/{{ quiz_code }}" id="quiz-link">http://127.0.0.1:8000/quiz/{{ quiz_code }}</a></p>
             
             <div class="row">
                 <div class="col-12 mb-3">
@@ -58,7 +58,7 @@
             const copyCodeButton = document.getElementById("copy-code");
             const copyLinkButton = document.getElementById("copy-link");
             const quizCode = "{{ quiz_code }}";
-            const quizLink = `example.com/quiz/${quizCode}`;
+            const quizLink = `'{http://127.0.0.1:8000/quiz/{{quiz_code}${quizCode}`;
 
             copyCodeButton.addEventListener("click", () => {
                 navigator.clipboard.writeText(quizCode).then(() => {
