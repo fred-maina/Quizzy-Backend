@@ -11,10 +11,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import requests
 import json
+import random
 from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
-
 
 def jwt_auth_required(view_func):
     @wraps(view_func)
@@ -48,8 +48,10 @@ def jwt_auth_required(view_func):
     return wrapper
 
 def index(request):
-    return render(request, 'index.html')
-
+    if request.user.is_authenticated:
+        return redirect('dashboard')  # Redirect to dashboard if user is authenticated
+    else:
+        return render(request, 'index.html')
 
 def login(request):
     return render(request, "login.html")
@@ -150,14 +152,15 @@ def add(request):
     return render(request, 'add.html')
 
 
-@jwt_auth_required
-def display_quiz(request, quiz_code):
+def quiz(request, quiz_code):
     access_token = request.COOKIES.get('access', '')
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
-    api_url = f'{settings.BASE_URL}/api/quizzes/{quiz_code}/questions/'  # Adjust BASE_URL as per your settings
+    api_url = f'{settings.BASE_URL}/api/quizzes/{quiz_code}/questions/'
+    
+    # Fetch quiz data
     response = requests.get(api_url, headers=headers)
     
     if response.status_code == 200:
@@ -167,21 +170,56 @@ def display_quiz(request, quiz_code):
 
             # Fetch quiz metadata using Quiz model
             quiz = get_object_or_404(Quiz, code=quiz_code)
-            quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')  # Format creation date as needed
-            quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"  # Combine first and last name
-            print(quiz.created_by.first_name)
-            print(questions_data)
+            quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')
+            quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"
+            
+            # Shuffle choices
             for question in questions_data:
                 correct_answer = question.pop('correct_answer')
                 other_choices = question.pop('other_choices')
-                choices= [correct_answer] + other_choices
-                question["choices"]=choices
-            print(questions_data)
+                choices = [correct_answer] + other_choices
+                random.shuffle(choices)
+                question["correct_answer"]=correct_answer
+                question["choices"] = choices
+                print(question["correct_answer"])
+
+            if request.method == 'POST':
+                # Handle quiz submission
+                selected_choices = {}
+                score = 0
+                total_questions = len(questions_data)
+                
+                for question_data in questions_data:
+                    question_text = question_data['question']
+                    correct_answer = question_data['correct_answer']
+                
+                    selected_answer = request.POST.get(question_text)
+                    
+                    if selected_answer:
+                        selected_choices[question_text] = selected_answer
+                        if selected_answer == correct_answer:
+                            score += 1
+
+                # Calculate the percentage score
+                percentage_score = (score / total_questions) * 100
+
+                
+                # Prepare the context for the leaderboard
+                context = {
+                    'quiz_code':quiz_code,
+                    'score': score,
+                    'total_questions': total_questions,
+                    'percentage_score': percentage_score,
+                    'selected_choices': selected_choices,
+                    'questions': questions_data,
+                }
+                return render(request, 'final_score.html', context)
+
             # Prepare context for rendering quiz display template
             context = {
                 'quiz_code': quiz_code,
-                'title':quiz.title,
-                'description':quiz.description,
+                'title': quiz.title,
+                'description': quiz.description,
                 'questions': questions_data,
                 'quiz_creation_date': quiz_creation_date,
                 'quiz_creator_name': quiz_creator_name
@@ -191,26 +229,3 @@ def display_quiz(request, quiz_code):
             return HttpResponse(f"Error fetching or parsing quiz data: {e}", status=500)
     else:
         return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}", status=response.status_code)
-
-def leaderboard(request):
-    if request.method == 'POST':
-        correct_answers = request.session.get('correct_answers')
-        number_of_questions = int(request.session.get('number_of_questions', 0))
-        correct_questions = 0# Iterate over each question and compare the selected answer with the correct answer
-        for question, correct_answer in correct_answers.items():
-            selected_answer = request.POST.get(question)
-            if selected_answer == correct_answer:
-                correct_questions += 1
-
-            # Calculate the percentage of correct questions
-            percentage = int((correct_questions / number_of_questions) * 100 if number_of_questions != 0 else 0)
-
-            # Pass the score data to the template
-            context = {
-                'total_questions': number_of_questions,
-                'correct_questions': correct_questions,
-                'percentage': percentage
-            }
-            return render(request, 'finalscore.html', context)
-        else:
-         return render(request, 'index.html')  # R'''
