@@ -30,8 +30,9 @@
     </div>
 
     <div class="center-content container mt-4">
-        <form method="post" action="{% url 'leaderboard' %}">
+        <form method="post" action="{% url 'display' quiz_code %}">
             {% csrf_token %}
+            <input type="hidden" name="quiz_code" value="{{ quiz_code }}">
             <div class="question-container">
                 {% for question_data in questions %}
                     <div id="question-display{{ forloop.counter }}" class="mb-4">
