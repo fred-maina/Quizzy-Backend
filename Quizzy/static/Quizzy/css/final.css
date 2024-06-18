@@ -1,0 +1,38 @@
+
+.final-score-content {
+    max-width: 600px;
+    padding: 20px;
+    border: 3px solid var(--primary-color); /* Use primary color for the border */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(124, 124, 248, 0.5); /* Adjust glow effect with primary color */
+    background-color: #FFFFFF; /* White background */
+}
+
+.final-score-content h2,
+.final-score-content h3 {
+    color:black; /* Use primary color for heading text */
+}
+
+.final-score-content a.btn-primary {
+    background-color: black; /* Use primary color for button background */
+    border-color: black; /* Use primary color for button border */
+}
+
+.btn-primary:hover {
+    background-color: #6a6af7; /* Adjust hover color to a shade of primary color */
+    border-color: #6a6af7; /* Adjust hover color to a shade of primary color */
+}
+/* Styles for the final score content container */
+.final-score-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    padding: 20px;
+    border: 3px solid var(--primary-color); /* Use primary color for the border */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(124, 124, 248, 0.5); /* Adjust glow effect with primary color */
+    background-color: #FFFFFF; /* White background */
+}
+
