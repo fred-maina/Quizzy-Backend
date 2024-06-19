@@ -1,5 +1,7 @@
-{% extends 'layout.html' %}
-{%load static%}
+
+    {% extends 'base.html' %}
+
+{% load static %}
 
 {% block title %}Home - Quizzy{% endblock %}
 
@@ -11,10 +13,13 @@
                 <main id="description">
                     <p>Welcome to Quizzy - Where Learning Meets Fun!</p>
                     <p>Test your knowledge with our wide range of quizzes, or create and share your own. You can even create gradable quizzes and track progress. Start learning and quizzing with Quizzy today!</p>
-                    <button id="callToAction" class="btn btn-primary">
-                        Create Account
-                    </button>
                     
+                        <button id="createAccountButton" class="btn btn-primary">
+                            Create Account/login
+                        </button>
+                        <button id="Dashboard" class="btn btn-primary">
+                            Create/Take a Quiz
+                        </button>
                 </main>
             </div>
             <div class="col-md-6">
@@ -25,4 +30,20 @@
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const dashboardButton = document.getElementById('Dashboard');
+    const createAccountButton = document.getElementById('createAccountButton');
+
+        dashboardButton.addEventListener('click', function() {
+            window.location.href = '/dashboard/'; // Update with your actual dashboard URL
+        })
+        createAccountButton.addEventListener('click', function() {
+            window.location.href = '/login/'; // Update with your actual signup URL
+        })
+    
+});
+</script>
 {% endblock %}
+
+
