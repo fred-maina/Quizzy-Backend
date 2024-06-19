@@ -116,7 +116,7 @@ def add(request):
             print(type(quiz_data_json))
 
             # Example: POST to API (replace with your actual API endpoint)
-            api_url = 'http://127.0.0.1:8000/api/create/'  # Adjust with your actual API endpoint
+            api_url = f'{settings.BASE_URL}/api/create/'  # Adjust with your actual API endpoint
 
             # Get access token from cookies
             access_token = request.COOKIES.get('access', '')
