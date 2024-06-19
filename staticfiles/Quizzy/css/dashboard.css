@@ -1,0 +1,186 @@
+
+
+.custom-container {
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 20px auto;
+    display: inline-block;
+}
+
+.stats {
+    font-size: 2rem;
+    margin: 20px 0;
+}
+
+.cta-buttons {
+    margin: 20px 0;
+}
+
+.cta-buttons .btn {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+}
+
+#navOverlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+#navOverlay ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    margin-top: 20%;
+}
+
+#navOverlay ul li {
+    margin: 20px 0;
+}
+
+#navOverlay ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+#navOverlay .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: white;
+}
+
+#navOverlay .arrow-wrapper .arrow {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(45deg);
+    margin-left: 10px;
+}
+
+/* Adjust chart colors for better visibility on dark background */
+.chart-container canvas {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #000000;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 400px; /* Limiting the width for better readability */
+    position: relative;
+    text-align: center; /* Center text horizontally */
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #f70000;
+    text-decoration: none;
+}
+
+/* Styling the form elements */
+#quizCodeForm {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#quizCodeInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+.quiz-table {
+    width: 100%;
+    max-width: 800px; /* Adjust the maximum width as per your design */
+    margin: 20px auto; /* Center the table and provide spacing */
+    border-collapse: collapse;
+    box-shadow: 0 0 15px rgba(226, 222, 222, 0.4); /* Add a stronger glowing box shadow */
+    font-family: Arial, sans-serif; /* Change font family */
+}
+
+.quiz-table th,
+.quiz-table td {
+    padding: 10px; /* Increase padding for better spacing */
+    text-align: center; /* Center align text */
+    border: 1px solid #333333; /* Dark gray border for cells */
+}
+
+.quiz-table th {
+    background-color: #003366; /* Dark Blue background for headers */
+    font-weight: bold;
+    color: #FFFFFF; /* White header text color */
+}
+
+.quiz-table tbody tr:nth-child(even) {
+    background-color: #3f99a5; /* Light Blue alternate row background color */
+}
+
+
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+    .quiz-table {
+        font-size: 14px; /* Smaller font size for smaller screens */
+    }
+}
+
