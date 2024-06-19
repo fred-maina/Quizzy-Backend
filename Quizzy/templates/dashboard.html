@@ -134,11 +134,9 @@
     const quizCodeForm = document.getElementById('quizCodeForm');
     quizCodeForm.addEventListener('submit', function(event) {
         event.preventDefault();
+        var BASE_URL="{{BASE_URL|escapejs}}";
         const quizCode = document.getElementById('quizCodeInput').value;
-        window.location='http://127.0.0.1:8000/quiz/'+quizCode
-        // You can perform further actions like sending the quiz code to your Django view via AJAX
-        console.log('Quiz Code entered:', quizCode);
-        // Optionally, close the modal after submission
+        window.location = `${BASE_URL}/quiz/${quizCode}`;
         modal.style.display = 'none';
     });
 });

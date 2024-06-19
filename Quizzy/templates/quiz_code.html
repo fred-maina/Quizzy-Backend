@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Created Successfully</title>
+    <link rel="icon" href="{% static 'Quizzy/images/favicon.ico' %}" type="image/x-icon">
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -36,20 +37,18 @@
     <div class="container">
         <div class="content">
             <h2>Quiz Created Successfully</h2>
-            <p>Your quiz has been successfully created!</p>
-            <p>Quiz Code: <strong>{{ quiz_code }}</strong></p>
-            <p>Quiz Link: <a href="/quiz/{{ quiz_code }}" id="quiz-link">http://127.0.0.1:8000/quiz/{{ quiz_code }}</a></p>
-            
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <button id="copy-code" class="btn btn-secondary mr-2">Copy Code</button>
-                    <button id="copy-link" class="btn btn-secondary">Copy Link</button>
-                </div>
-                <div class="col-12">
-                    <a href="/dashboard/" class="btn btn-primary mb-2">Go back to Dashboard</a>
-                    <a href="/add/" class="btn btn-success">Create New Quiz</a>
-                </div>
-            </div>
+    <p>Your quiz has been successfully created!</p>
+    <p>Quiz Code: <strong>{{ quiz_code }}</strong></p>
+    <p>Quiz Link: <a href="/quiz/{{ quiz_code }}" id="quiz-link">{{ BASE_URL }}/quiz/{{ quiz_code }}</a></p>
+
+    <div class="row">
+        <div class="col-12 mb-3">
+            <button id="copy-code" class="btn btn-secondary mr-2">Copy Code</button>
+            <button id="copy-link" class="btn btn-secondary">Copy Link</button>
+        </div>
+        <div class="col-12">
+            <a href="/dashboard/" class="btn btn-primary mb-2">Go back to Dashboard</a>
+            <a href="/add/" class="btn btn-success">Create New Quiz</a>
         </div>
     </div>
 
@@ -58,7 +57,7 @@
             const copyCodeButton = document.getElementById("copy-code");
             const copyLinkButton = document.getElementById("copy-link");
             const quizCode = "{{ quiz_code }}";
-            const quizLink = `'{http://127.0.0.1:8000/quiz/{{quiz_code}${quizCode}`;
+            const quizLink = `${BASE_URL}/quiz/${quizCode}`;
 
             copyCodeButton.addEventListener("click", () => {
                 navigator.clipboard.writeText(quizCode).then(() => {
@@ -76,5 +75,4 @@
 
     <!-- Include Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
