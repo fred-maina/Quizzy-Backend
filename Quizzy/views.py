@@ -57,7 +57,7 @@ def dashboard(request):
     user = request.user
     quizzes = Quiz.objects.filter(created_by=user.id)
     print(user)
-    return render(request, "dashboard.html", {"user": user.first_name,"quizzes":quizzes})
+    return render(request, "dashboard.html", {"user": user.first_name,"quizzes":quizzes,"BASE_URL":settings.BASE_URL})
 
 
 @jwt_auth_required
@@ -133,7 +133,7 @@ def add(request):
                 try:
                     api_response = response.json()
                     quiz_code = api_response.get('quiz_code', 'N/A')
-                    return render(request, 'quiz_code.html', {'quiz_code': quiz_code})
+                    return render(request, 'quiz_code.html', {'quiz_code': quiz_code,"BASE_URL":settings.BASE_URL})
                 except json.JSONDecodeError as e:
                     return JsonResponse({'success': False, 'error': 'Invalid JSON response from API'})
             else:
