@@ -16,14 +16,13 @@ from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
 
-def jwt_auth_required(view_func):
+def jwt_auth_required(view_func,route="/login/"):
     @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
+    def wrapper(request,*args, **kwargs):
         token = request.COOKIES.get('access')  # Assuming token is stored in a cookie
 
         if not token:
-            return redirect('/login/')  # Redirect to login page if token is missing
-
+            return redirect(route)  # Redirect to login page if token is missing
         try:
             access_token = AccessToken(token)
             current_utc_timestamp = datetime.utcnow().timestamp()
@@ -43,20 +42,16 @@ def jwt_auth_required(view_func):
 
         except Exception as e:
             print(f"JWT verification failed: {e}")
-            return render(request, "login.html", {"error_message": "Access denied"})  # Handle the error as needed
+            return redirect(route)
 
     return wrapper
 
+
 def index(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')  # Redirect to dashboard if user is authenticated
-    else:
-        return render(request, 'index.html')
+    return render (request,"index.html")
 
 def login(request):
     return render(request, "login.html")
-
-
 @jwt_auth_required
 def dashboard(request):
     user = request.user
