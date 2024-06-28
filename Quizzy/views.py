@@ -12,6 +12,7 @@ from django.http import JsonResponse
 import requests
 import json
 import random
+from . import user
 from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
@@ -49,6 +50,8 @@ def jwt_auth_required(view_func,route="/login/"):
 
 def index(request):
     return render (request,"index.html")
+
+
 
 def login(request):
     return render(request, "login.html")
@@ -141,7 +144,7 @@ def add(request):
     # Handle other HTTP methods or initial rendering of the form
     return render(request, 'add.html')
 
-
+@jwt_auth_required
 def quiz(request, quiz_code):
     access_token = request.COOKIES.get('access', '')
     headers = {
@@ -154,7 +157,7 @@ def quiz(request, quiz_code):
     response = requests.get(api_url, headers=headers)
     
     if response.status_code == 200:
-        try:
+        
             quiz_data = response.json()
             questions_data = quiz_data.get('questions', [])
 
@@ -192,7 +195,7 @@ def quiz(request, quiz_code):
                 # Calculate the percentage score
                 percentage_score = (score / total_questions) * 100
 
-                
+                leaderboard=user.save_performance(quiz,percentage_score,user=request.user)
                 # Prepare the context for the leaderboard
                 context = {
                     'quiz_code':quiz_code,
@@ -214,7 +217,6 @@ def quiz(request, quiz_code):
                 'quiz_creator_name': quiz_creator_name
             }
             return render(request, 'quiz.html', context)
-        except Exception as e:
-            return HttpResponse(f"Error fetching or parsing quiz data: {e}", status=500)
+        
     else:
         return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}", status=response.status_code)
