@@ -56,7 +56,6 @@ def login(request):
 def dashboard(request):
     user = request.user
     quizzes = Quiz.objects.filter(created_by=user.id)
-    print(user)
     return render(request, "dashboard.html", {"user": user.first_name,"quizzes":quizzes,"BASE_URL":settings.BASE_URL})
 
 
@@ -111,10 +110,6 @@ def add(request):
             }
 
             # Convert to JSON
-            quiz_data_json = json.dumps(quiz_data)
-            print(quiz_data_json)
-            print(type(quiz_data_json))
-
             # Example: POST to API (replace with your actual API endpoint)
             api_url = f'{settings.BASE_URL}/api/create/'  # Adjust with your actual API endpoint
 
@@ -176,7 +171,6 @@ def quiz(request, quiz_code):
                 random.shuffle(choices)
                 question["correct_answer"]=correct_answer
                 question["choices"] = choices
-                print(question["correct_answer"])
 
             if request.method == 'POST':
                 # Handle quiz submission
