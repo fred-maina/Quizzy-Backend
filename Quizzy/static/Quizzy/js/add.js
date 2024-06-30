@@ -1,4 +1,4 @@
-let questionCount = 1;
+let questionCount = 0;
 
 document.getElementById('addQuestion').addEventListener('click', () => {
     questionCount++;
