@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import Quiz, Question, Choice
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -61,6 +62,9 @@ def questions_by_quiz(request, quiz_code):
         return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
 
     questions = Question.objects.filter(quiz=quiz)
+    quiz = get_object_or_404(Quiz, code=quiz_code)
+    quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')
+    quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"
 
     questions_data = []
     for question in questions:
@@ -82,7 +86,12 @@ def questions_by_quiz(request, quiz_code):
     response_data = {
         'response_code': status.HTTP_200_OK,
         'quiz_code': quiz.code,
-        'questions': questions_data
+        'title': quiz.title,
+        'description':quiz.description,
+        'questions': questions_data,
+        'quiz_creation_date': quiz_creation_date,
+        'quiz_creator_name': quiz_creator_name,
+
     }
     return Response(response_data)
 
