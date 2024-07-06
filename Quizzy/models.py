@@ -11,3 +11,14 @@ class Leaderboard(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['quiz', 'user'], name='unique_quiz_user')
         ]
+
+    def save(self, *args, **kwargs):
+        # Check if an entry with the same quiz and user already exists
+        existing_entry = Leaderboard.objects.filter(quiz=self.quiz, user=self.user).first()
+        if existing_entry:
+            # Update the existing entry
+            existing_entry.score = self.score
+            super(Leaderboard, existing_entry).save(*args, **kwargs)
+        else:
+            # Create a new entry
+            super(Leaderboard, self).save(*args, **kwargs)
