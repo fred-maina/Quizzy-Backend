@@ -133,3 +133,14 @@ def create(request):
         return Response({'quiz_code': quiz.code}, status=status.HTTP_201_CREATED)
     else:
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_quiz(request, quiz_code):
+    try:
+        quiz = Quiz.objects.get(code=quiz_code)
+    except Quiz.DoesNotExist:
+        return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    quiz.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
