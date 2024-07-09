@@ -64,63 +64,60 @@ def dashboard(request):
     return render(request,
                   "dashboard.html",
                   {"user": user.first_name, "quizzes": quizzes, "BASE_URL": settings.BASE_URL})
-
-
 @jwt_auth_required
 def add(request):
-    if request.method == "GET":
-        return render(request, "add.html")
-
     if request.method == 'POST':
         try:
+            # Fetch quiz name and description
             quiz_name = request.POST.get('quizName', '')
             quiz_description = request.POST.get('quizDescription', '')
 
+            # Initialize list to store questions
             questions = []
-            question_counter = 0
-            while True:
-                question_key = f'question-{question_counter}-text'
-                if question_key not in request.POST:
-                    break
 
-                question_text = request.POST.get(question_key, '')
-                choices = []
-                choice_counter = 0
-                while True:
-                    choice_key_text = f'question-{question_counter}-choice-{choice_counter}-text'
-                    choice_key_correct = f'question-{question_counter}-choice-{choice_counter}-correct'
-                    if choice_key_text not in request.POST:
-                        break
+            # Identify all unique question IDs
+            question_ids = set()
+            for key in request.POST.keys():
+                if key.startswith('question-') and key.endswith('-text'):
+                    key_parts = key.split('-')
+                    question_id = key_parts[1]
+                    question_ids.add(question_id)
 
-                    choice_text = request.POST.get(choice_key_text, '')
-                    choice_correct = request.POST.get(choice_key_correct, '') == 'on'
+            for question_id in question_ids:
+                question_text = request.POST.get(f'question-{question_id}-text', '')
 
-                    choices.append({
-                        'choice_text': choice_text,
-                        'is_correct': choice_correct
-                    })
+                question_choices = []
+                for choice_key in request.POST.keys():
+                    if choice_key.startswith(f'question-{question_id}-choice-') and choice_key.endswith('-text'):
+                        choice_parts = choice_key.split('-')
+                        choice_id = choice_parts[3]
+                        choice_text = request.POST.get(f'question-{question_id}-choice-{choice_id}-text', '')
+                        choice_correct = request.POST.get(f'question-{question_id}-correct-choice', '') == choice_id
 
-                    choice_counter += 1
+                        # Append choice to question_choices list
+                        question_choices.append({
+                            'choice_text': choice_text,
+                            'is_correct': choice_correct
+                        })
 
+                # Append question with choices to questions list
                 questions.append({
                     'question_text': question_text,
-                    'choices': choices
+                    'choices': question_choices
                 })
 
-                question_counter += 1
-
-            # Prepare data to POST to API
+            # Construct quiz_data with title, description, and questions
             quiz_data = {
                 'title': quiz_name,
                 'description': quiz_description,
                 'questions': questions
             }
 
-            # Convert to JSON
+            # For testing, print the quiz data
             # Example: POST to API (replace with your actual API endpoint)
             api_url = f'{settings.BASE_URL}/api/create/'  # Adjust with your actual API endpoint
 
-            # Get access token from cookies
+            # Get access token from cookies or session if needed
             access_token = request.COOKIES.get('access', '')
 
             headers = {
@@ -135,21 +132,28 @@ def add(request):
                 try:
                     api_response = response.json()
                     quiz_code = api_response.get('quiz_code', 'N/A')
-                    return render(request, 'quiz_code.html', {'quiz_code': quiz_code, "BASE_URL": settings.BASE_URL})
-                except json.JSONDecodeError as e:
+                    return render(request, 'quiz_code.html', {'quiz_code': quiz_code, 'BASE_URL': settings.BASE_URL})
+                except json.JSONDecodeError:
                     return JsonResponse({'success': False, 'error': 'Invalid JSON response from API'})
             else:
-                return JsonResponse({'success': False,
-                                     'error': f'Failed to create quiz. API returned status code: {response.status_code}'})
+                return JsonResponse({'success': False, 'error': f'Failed to create quiz. API returned status code: {response.status_code}'})
 
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+            import errno
+            import socket
+
+            if isinstance(e, socket.error) and e.errno == errno.EPIPE:
+                # Handle broken pipe error gracefully
+                print("Client disconnected before the response was sent")
+                return JsonResponse({'success': False, 'error': 'Client disconnected'})
+            else:
+                return JsonResponse({'success': False, 'error': str(e)})
+
+    elif request.method == 'GET':
+        return render(request, 'add.html')
 
     # Handle other HTTP methods or initial rendering of the form
-
     return render(request, 'add.html')
-
-
 @jwt_auth_required
 def quiz(request, quiz_code):
     access_token = request.COOKIES.get('access', '')
