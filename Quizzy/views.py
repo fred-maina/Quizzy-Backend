@@ -16,6 +16,7 @@ from . import user
 from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
+from django.views.decorators.csrf import csrf_exempt
 
 
 def jwt_auth_required(view_func, route="/login/"):
