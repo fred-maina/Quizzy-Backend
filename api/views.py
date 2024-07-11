@@ -42,7 +42,7 @@ def quizzes(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def quiz_detail(request, quiz_code):  # Update argument name to match URL configuration
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -97,7 +97,7 @@ def questions_by_quiz(request, quiz_code):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Ensure user is authenticated
+#@permission_classes([IsAuthenticated])  # Ensure user is authenticated
 def create(request):
     # Retrieve questions and choices from request data
     questions = request.data.pop('questions', [])
@@ -134,7 +134,7 @@ def create(request):
     else:
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def delete_quiz(request, quiz_code):
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -142,5 +142,5 @@ def delete_quiz(request, quiz_code):
         return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
 
     quiz.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response({"detail": "Quiz deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
