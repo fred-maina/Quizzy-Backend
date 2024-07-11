@@ -7,7 +7,7 @@ const addChoice = (choicesContainer, questionId) => {
     choiceItem.innerHTML = `
         <input type="text" class="form-control" name="question-${questionId}-choice-${choiceId}-text" placeholder="Enter choice text" required>
         <div class="input-group-text">
-            <input type="radio" name=${questionId}-correct-choice" value="${choiceId}" aria-label="Correct choice" required>
+            <input type="radio" name="${questionId}-correct-choice" value="${choiceId}" aria-label="Correct choice" required>
         </div>
         <button type="button" class="delete-btn delete-choice btn btn-danger">&times;</button>
     `;
@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.forEach((value, key) => {
             data[key] = value;
         });
+        console.log(data)
 
         fetch('/add/', {
             method: 'POST',
