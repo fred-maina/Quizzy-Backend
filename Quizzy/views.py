@@ -16,6 +16,7 @@ from . import user
 from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
+from django.views.decorators.csrf import csrf_exempt
 
 
 def jwt_auth_required(view_func, route="/login/"):
@@ -50,11 +51,13 @@ def jwt_auth_required(view_func, route="/login/"):
 
 
 def index(request):
+    
     return render(request, "index.html")
 
 
 def login(request):
     return render(request, "login.html")
+
 
 
 @jwt_auth_required
@@ -64,35 +67,46 @@ def dashboard(request):
     return render(request,
                   "dashboard.html",
                   {"user": user.first_name, "quizzes": quizzes, "BASE_URL": settings.BASE_URL})
-@jwt_auth_required
+
+@csrf_exempt
+#@jwt_auth_required
 def add(request):
     if request.method == 'POST':
         try:
+            # Decode and parse the JSON data
+            data = json.loads(request.body.decode('utf-8'))
+            
+            # Print all keys and values
+            print("Received data:")
+            for key, value in data.items():
+                print(f"{key}: {value}")
+
             # Fetch quiz name and description
-            quiz_name = request.POST.get('quizName', '')
-            quiz_description = request.POST.get('quizDescription', '')
+            quiz_name = data.get('quizName', '')
+            quiz_description = data.get('quizDescription', '')
 
             # Initialize list to store questions
             questions = []
 
             # Identify all unique question IDs
             question_ids = set()
-            for key in request.POST.keys():
+            for key in data.keys():
                 if key.startswith('question-') and key.endswith('-text'):
                     key_parts = key.split('-')
                     question_id = key_parts[1]
                     question_ids.add(question_id)
 
             for question_id in question_ids:
-                question_text = request.POST.get(f'question-{question_id}-text', '')
+                question_text = data.get(f'question-{question_id}-text', '')
 
                 question_choices = []
-                for choice_key in request.POST.keys():
+                for choice_key in data.keys():
                     if choice_key.startswith(f'question-{question_id}-choice-') and choice_key.endswith('-text'):
                         choice_parts = choice_key.split('-')
+                        
                         choice_id = choice_parts[3]
-                        choice_text = request.POST.get(f'question-{question_id}-choice-{choice_id}-text', '')
-                        choice_correct = request.POST.get(f'question-{question_id}-correct-choice', '') == choice_id
+                        choice_text = data.get(f'question-{question_id}-choice-{choice_id}-text', '')
+                        choice_correct = data.get(f'{question_id}-correct-choice', '') == choice_id
 
                         # Append choice to question_choices list
                         question_choices.append({
@@ -114,6 +128,8 @@ def add(request):
             }
 
             # For testing, print the quiz data
+            print(json.dumps(quiz_data, indent=4))
+
             # Example: POST to API (replace with your actual API endpoint)
             api_url = f'{settings.BASE_URL}/api/create/'  # Adjust with your actual API endpoint
 
@@ -154,6 +170,7 @@ def add(request):
 
     # Handle other HTTP methods or initial rendering of the form
     return render(request, 'add.html')
+
 @jwt_auth_required
 def quiz(request, quiz_code):
     access_token = request.COOKIES.get('access', '')
@@ -199,7 +216,7 @@ def quiz(request, quiz_code):
             if total_questions == 0:
                 total_questions = +1
             # Calculate the percentage score
-            percentage_score = (score / total_questions) * 100
+            percentage_score = int((score / total_questions) * 100)
 
             return render(request, 'final_score.html', context={'percentage_score': percentage_score, 'quiz_code':quiz_code})
 
