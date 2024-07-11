@@ -7,9 +7,9 @@ const addChoice = (choicesContainer, questionId) => {
     choiceItem.innerHTML = `
         <input type="text" class="form-control" name="question-${questionId}-choice-${choiceId}-text" placeholder="Enter choice text" required>
         <div class="input-group-text">
-            <input type="radio" name="question-${questionId}-correct-choice" value="${choiceId}" aria-label="Correct choice" required>
+            <input type="radio" name=${questionId}-correct-choice" value="${choiceId}" aria-label="Correct choice" required>
         </div>
-        <button type="button" class="delete-btn delete-choice" style="max-height: 36px; max-width: 10px; background-color: red;">&times;</button>
+        <button type="button" class="delete-btn delete-choice btn btn-danger">&times;</button>
     `;
     choicesContainer.appendChild(choiceItem);
 
@@ -27,7 +27,7 @@ const loadQuestion = () => {
     questionItem.innerHTML = `
         <div class="d-flex justify-content-between align-items-center">
             <label class="form-label">Question</label>
-            <button type="button" class="delete-btn delete-question" style="max-height: 36px; max-width: fit-content; background-color: brown;">delete question &times;</button>
+            <button type="button" class="delete-btn delete-question btn btn-danger">Delete Question &times;</button>
         </div>
         <input type="text" class="form-control mb-2 question-text" name="question-${questionId}-text" placeholder="Enter question text" required>
         <div class="choices-container"></div>
@@ -59,4 +59,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial setup: Load the first question on page load
     loadQuestion();
+
+    document.getElementById('quizForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = {};
+
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        fetch('/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.text()) // Expect HTML response
+        .then(html => {
+            document.body.innerHTML = html; // Replace the current document with the new HTML
+        })
+        .catch(error => console.error('Error:', error));
+    });
 });
