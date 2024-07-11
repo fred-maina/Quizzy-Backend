@@ -65,6 +65,8 @@ def dashboard(request):
     return render(request,
                   "dashboard.html",
                   {"user": user.first_name, "quizzes": quizzes, "BASE_URL": settings.BASE_URL})
+
+@csrf_exempt
 @jwt_auth_required
 def add(request):
     if request.method == 'POST':
