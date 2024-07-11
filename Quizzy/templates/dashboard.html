@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="{% static 'Quizzy/css/dashboard.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Main Content -->
 <div class="container custom-container">
     <div class="text-center">
         <h1>Welcome {{ user }} to Quizzy!</h1>
@@ -17,7 +16,7 @@
         <p>Total Quizzes on Platform: <span id="totalQuizzes">1200</span></p>
     </div>
     <div class="cta-buttons">
-        <a href="#" id=CreateQuiz class="btn btn-primary">Create a New Quiz</a>
+        <a href="#" id="CreateQuiz" class="btn btn-primary">Create a New Quiz</a>
         <a href="#" class="btn btn-secondary">Take a Quiz</a>
     </div>
     <div class="quizData">
@@ -29,6 +28,7 @@
                     <th>Date created</th>
                     <th>Quiz Name</th>
                     <th>Quiz Code</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,6 +37,9 @@
                     <td>{{ quiz.date_created }}</td>
                     <td>{{ quiz.title }}</td>
                     <td>{{ quiz.code }}</td>
+                    <td>
+                        <button class="delete-btn" data-quiz-code="{{ quiz.code }}">Delete</button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -52,6 +55,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal -->
 <div id="quizCodeModal" class="modal">
     <div class="modal-content">
@@ -65,8 +69,6 @@
         </form>
     </div>
 </div>
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -100,48 +102,94 @@
             type: 'pie',
             data: categoriesData
         });
-    });
-    document.addEventListener("DOMContentLoaded",()=>{
-        createQuiz=document.getElementById("CreateQuiz")
-        createQuiz.addEventListener("click",
-        ()=>{
-            window.location=("/add/")
-        })
-    }
-    )
-    document.addEventListener("DOMContentLoaded", function() {
-    const takeQuizButton = document.querySelector('.btn-secondary');
-    const modal = document.getElementById('quizCodeModal');
-    const closeBtn = document.querySelector('.close');
 
-    // Show modal when 'Take a Quiz' button is clicked
-    takeQuizButton.addEventListener('click', function() {
-        modal.style.display = 'block';
-    });
+        // Redirect to create quiz page
+        document.getElementById('CreateQuiz').addEventListener('click', function() {
+            window.location = "/add/";
+        });
 
-    // Close the modal when the close button or outside modal is clicked
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
+        // Handle modal for taking a quiz
+        const takeQuizButton = document.querySelector('.btn-secondary');
+        const modal = document.getElementById('quizCodeModal');
+        const closeBtn = document.querySelector('.close');
 
-    window.addEventListener('click', function(event) {
-        if (event.target == modal) {
+        takeQuizButton.addEventListener('click', function() {
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        const quizCodeForm = document.getElementById('quizCodeForm');
+        quizCodeForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const BASE_URL = "{{BASE_URL|escapejs}}";
+            const quizCode = document.getElementById('quizCodeInput').value;
+            window.location = `${BASE_URL}/quiz/${quizCode}`;
+            modal.style.display = 'none';
+        });
+
+        // Handle delete quiz
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const quizCode = this.getAttribute('data-quiz-code');
+                const csrfToken = getCSRFToken();
+                const accessToken = getCookie('access');
+
+                fetch(`/api/quizzes/${quizCode}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Delete failed');
+                    }
+                    return 0;
+                })
+                .then(data => {
+                    console.log('Delete success:', data);
+                    // Optionally, remove the quiz row from the table
+                    button.closest('tr').remove();
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    alert('Delete failed: ' + error.message);
+                });
+            });
+        });
+    });
+
+    // Helper function to get a cookie by name
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
         }
-    });
+        return cookieValue;
+    }
 
-    // Handle form submission
-    const quizCodeForm = document.getElementById('quizCodeForm');
-    quizCodeForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        var BASE_URL="{{BASE_URL|escapejs}}";
-        const quizCode = document.getElementById('quizCodeInput').value;
-        window.location = `${BASE_URL}/quiz/${quizCode}`;
-        modal.style.display = 'none';
-    });
-});
-
-    
+    // Helper function to get CSRF token from meta tag
+    function getCSRFToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
 </script>
 
 {% endblock %}
