@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Quiz, Question, Choice
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
@@ -22,6 +21,7 @@ def quizzes(request):
             questions = Question.objects.filter(quiz=quiz)
             for question in questions:
                 question_data = {
+                    'id': question.id,  # Include question ID
                     'question': question.question_text,
                     'correct_answer': None,
                     'other_choices': []
@@ -30,8 +30,11 @@ def quizzes(request):
                 for choice in choices:
                     if choice.is_correct:
                         question_data['correct_answer'] = choice.choice_text
-                    else:
-                        question_data['other_choices'].append(choice.choice_text)
+                    question_data['other_choices'].append({
+                        'id': choice.id,  # Include choice ID
+                        'choice_text': choice.choice_text,
+                        'is_correct': choice.is_correct
+                    })
                 quiz_data['questions'].append(question_data)
             quizzes_data.append(quiz_data)
         response_data = {
@@ -40,9 +43,8 @@ def quizzes(request):
         }
         return Response(response_data)
 
-
 @api_view(['GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def quiz_detail(request, quiz_code):  # Update argument name to match URL configuration
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -62,24 +64,24 @@ def questions_by_quiz(request, quiz_code):
         return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
 
     questions = Question.objects.filter(quiz=quiz)
-    quiz = get_object_or_404(Quiz, code=quiz_code)
     quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')
     quiz_creator_name = f"{quiz.created_by.first_name} {quiz.created_by.last_name}"
 
     questions_data = []
     for question in questions:
         question_data = {
+            'id': question.id,  # Include question ID
             'question': question.question_text,
-            'correct_answer': None,
-            'other_choices': []
+            'choices': []
         }
 
         choices = Choice.objects.filter(question=question)
         for choice in choices:
-            if choice.is_correct:
-                question_data['correct_answer'] = choice.choice_text
-            else:
-                question_data['other_choices'].append(choice.choice_text)
+            question_data['choices'].append({
+                'id': choice.id,  # Include choice ID
+                'choice_text': choice.choice_text,
+                'is_correct': choice.is_correct
+            })
 
         questions_data.append(question_data)
 
@@ -87,17 +89,16 @@ def questions_by_quiz(request, quiz_code):
         'response_code': status.HTTP_200_OK,
         'quiz_code': quiz.code,
         'title': quiz.title,
-        'description':quiz.description,
+        'description': quiz.description,
         'questions': questions_data,
         'quiz_creation_date': quiz_creation_date,
         'quiz_creator_name': quiz_creator_name,
-
     }
     return Response(response_data)
 
 
 @api_view(['POST'])
-#@permission_classes([IsAuthenticated])  # Ensure user is authenticated
+@permission_classes([IsAuthenticated])  # Ensure user is authenticated
 def create(request):
     # Retrieve questions and choices from request data
     questions = request.data.pop('questions', [])
@@ -133,8 +134,55 @@ def create(request):
         return Response({'quiz_code': quiz.code}, status=status.HTTP_201_CREATED)
     else:
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])  # Ensure user is authenticated
+def update_question(request, quiz_code):
+    # Fetch the quiz based on the provided quiz code
+    quiz = get_object_or_404(Quiz, code=quiz_code)
+    
+    data = request.data
+
+    # Update questions and choices
+    questions_data = data.get('questions', [])
+    
+    for question_data in questions_data:
+        question_id = question_data.get('id', None)
+        
+        if question_id:
+            # Update existing question
+            question = get_object_or_404(Question, id=question_id, quiz=quiz)
+            if 'question' in question_data:
+                question.question_text = question_data['question']
+                question.save()
+        else:
+            # Create new question
+            question = Question.objects.create(
+                quiz=quiz,
+                question_text=question_data.get('question', '')
+            )
+        
+        # Update or add choices
+        choices_data = question_data.get('choices', [])
+        for choice_data in choices_data:
+            choice_id = choice_data.get('id', None)
+            if choice_id:
+                choice = get_object_or_404(Choice, id=choice_id, question=question)
+                choice.choice_text = choice_data.get('choice_text', choice.choice_text)
+                choice.is_correct = choice_data.get('is_correct', choice.is_correct)
+                choice.save()
+            else:
+                # Create new choice
+                Choice.objects.create(
+                    question=question,
+                    choice_text=choice_data['choice_text'],
+                    is_correct=choice_data.get('is_correct', False)
+                )
+
+    return Response({'message': 'Questions and choices updated successfully'}, status=status.HTTP_200_OK)
+
 @api_view(['DELETE'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def delete_quiz(request, quiz_code):
     try:
         quiz = Quiz.objects.get(code=quiz_code)
@@ -143,4 +191,3 @@ def delete_quiz(request, quiz_code):
 
     quiz.delete()
     return Response({"detail": "Quiz deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-
