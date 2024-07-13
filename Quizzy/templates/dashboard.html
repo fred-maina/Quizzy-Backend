@@ -21,7 +21,7 @@
     </div>
     <div class="quizData">
         {% if quizzes %}
-        <table class="quiz-table">
+        <table class="quiz-table" id="quizTable">
             <h1>Your Quizzes</h1>
             <thead>
                 <tr>
@@ -36,9 +36,10 @@
                 <tr>
                     <td>{{ quiz.date_created }}</td>
                     <td>{{ quiz.title }}</td>
-                    <td>{{ quiz.code }}</td>
+                    <td><a href="/quiz/{{ quiz.code }}">{{ quiz.code }}</a></td>
                     <td>
-                        <button class="delete-btn" data-quiz-code="{{ quiz.code }}">Delete</button>
+                        <button class="edit-btn btn btn-warning btn-sm" data-quiz-code="{{ quiz.code }}">Edit</button>
+                        <button class="delete-btn btn btn-danger btn-sm" data-quiz-code="{{ quiz.code }}">Delete</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -151,6 +152,7 @@
                         'Content-Type': 'application/json'
                     }
                 })
+                
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Delete failed');
@@ -159,13 +161,27 @@
                 })
                 .then(data => {
                     console.log('Delete success:', data);
-                    // Optionally, remove the quiz row from the table
+                    // Remove the quiz row from the table
                     button.closest('tr').remove();
+                    
+                    // Check if there are any quizzes left
+                    if (document.querySelectorAll('.quiz-table tbody tr').length === 0) {
+                        document.getElementById('quizTable').remove();
+                    }
                 })
                 .catch(error => {
                     console.error('Delete error:', error);
                     alert('Delete failed: ' + error.message);
                 });
+            });
+        });
+
+        // Handle edit quiz
+        const editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const quizCode = this.getAttribute('data-quiz-code');
+                window.location = `/quiz/${quizCode}/edit`;
             });
         });
     });
