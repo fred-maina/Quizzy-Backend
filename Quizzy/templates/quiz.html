@@ -39,7 +39,7 @@
                     <div id="question-display{{ forloop.counter }}" class="mb-4">
                         <h3 class="mb-3">Question {{ forloop.counter }}: {{ question_data.question }}</h3>
                         <div>
-                            {% for choice in question_data.choices %}
+                            {% for choice in question_data.choices_data %}
                                 <div class="form-check mb-2">
                                     <input class="form-check-input" type="radio" name="{{ question_data.question }}" value="{{ choice }}">
                                     <label class="form-check-label" for="{{ choice }}">{{ choice }}</label>
