@@ -182,7 +182,7 @@ def update_question(request, quiz_code):
     return Response({'message': 'Questions and choices updated successfully'}, status=status.HTTP_200_OK)
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def delete_quiz(request, quiz_code):
     try:
         quiz = Quiz.objects.get(code=quiz_code)
