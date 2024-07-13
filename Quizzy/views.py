@@ -1,18 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from rest_framework_simplejwt.tokens import AccessToken
-from datetime import datetime, timedelta
-from django.http import HttpResponseForbidden, HttpResponse
-from django.shortcuts import render, redirect
-from django.conf import settings
-from rest_framework_simplejwt.tokens import AccessToken
 from datetime import datetime
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import requests
 import json
 import random
-from . import user
 from api.models import Quiz, Question, Choice
 from django.contrib.auth.models import User
 from functools import wraps
@@ -51,13 +44,11 @@ def jwt_auth_required(view_func, route="/login/"):
 
 
 def index(request):
-    
     return render(request, "index.html")
 
 
 def login(request):
     return render(request, "login.html")
-
 
 
 @jwt_auth_required
@@ -68,27 +59,18 @@ def dashboard(request):
                   "dashboard.html",
                   {"user": user.first_name, "quizzes": quizzes, "BASE_URL": settings.BASE_URL})
 
+
 @csrf_exempt
-#@jwt_auth_required
+# @jwt_auth_required
 def add(request):
     if request.method == 'POST':
         try:
-            # Decode and parse the JSON data
             data = json.loads(request.body.decode('utf-8'))
-            
-            # Print all keys and values
-            print("Received data:")
-            for key, value in data.items():
-                print(f"{key}: {value}")
 
-            # Fetch quiz name and description
             quiz_name = data.get('quizName', '')
             quiz_description = data.get('quizDescription', '')
 
-            # Initialize list to store questions
             questions = []
-
-            # Identify all unique question IDs
             question_ids = set()
             for key in data.keys():
                 if key.startswith('question-') and key.endswith('-text'):
@@ -103,37 +85,27 @@ def add(request):
                 for choice_key in data.keys():
                     if choice_key.startswith(f'question-{question_id}-choice-') and choice_key.endswith('-text'):
                         choice_parts = choice_key.split('-')
-                        
                         choice_id = choice_parts[3]
                         choice_text = data.get(f'question-{question_id}-choice-{choice_id}-text', '')
                         choice_correct = data.get(f'{question_id}-correct-choice', '') == choice_id
 
-                        # Append choice to question_choices list
                         question_choices.append({
                             'choice_text': choice_text,
                             'is_correct': choice_correct
                         })
 
-                # Append question with choices to questions list
                 questions.append({
                     'question_text': question_text,
                     'choices': question_choices
                 })
 
-            # Construct quiz_data with title, description, and questions
             quiz_data = {
                 'title': quiz_name,
                 'description': quiz_description,
                 'questions': questions
             }
 
-            # For testing, print the quiz data
-            print(json.dumps(quiz_data, indent=4))
-
-            # Example: POST to API (replace with your actual API endpoint)
-            api_url = f'{settings.BASE_URL}/api/create/'  # Adjust with your actual API endpoint
-
-            # Get access token from cookies or session if needed
+            api_url = f'{settings.BASE_URL}/api/create/'
             access_token = request.COOKIES.get('access', '')
 
             headers = {
@@ -143,7 +115,6 @@ def add(request):
 
             response = requests.post(api_url, headers=headers, json=quiz_data)
 
-            # Check API response
             if response.status_code == 201:
                 try:
                     api_response = response.json()
@@ -159,7 +130,6 @@ def add(request):
             import socket
 
             if isinstance(e, socket.error) and e.errno == errno.EPIPE:
-                # Handle broken pipe error gracefully
                 print("Client disconnected before the response was sent")
                 return JsonResponse({'success': False, 'error': 'Client disconnected'})
             else:
@@ -168,10 +138,10 @@ def add(request):
     elif request.method == 'GET':
         return render(request, 'add.html')
 
-    # Handle other HTTP methods or initial rendering of the form
     return render(request, 'add.html')
 
-@jwt_auth_required
+
+# @jwt_auth_required
 def quiz(request, quiz_code):
     access_token = request.COOKIES.get('access', '')
     headers = {
@@ -179,8 +149,6 @@ def quiz(request, quiz_code):
         'Content-Type': 'application/json'
     }
     api_url = f'{settings.BASE_URL}/api/quizzes/{quiz_code}/questions/'
-
-    # Fetch quiz data
     response = requests.get(api_url, headers=headers)
 
     if response.status_code == 200:
@@ -190,37 +158,11 @@ def quiz(request, quiz_code):
         quiz_description = quiz_data['description']
 
         for question in questions_data:
-            correct_answer = question.pop('correct_answer')
-            other_choices = question.pop('other_choices')
-            choices = [correct_answer] + other_choices
-            random.shuffle(choices)
-            question["correct_answer"] = correct_answer
-            question["choices"] = choices
-
-        if request.method == 'POST':
-            # Handle quiz submission
-            selected_choices = {}
-            score = 0
-            total_questions = len(questions_data)
-
-            for question_data in questions_data:
-                question_text = question_data['question']
-                correct_answer = question_data['correct_answer']
-
-                selected_answer = request.POST.get(question_text)
-
-                if selected_answer:
-                    selected_choices[question_text] = selected_answer
-                    if selected_answer == correct_answer:
-                        score += 1
-            if total_questions == 0:
-                total_questions = +1
-            # Calculate the percentage score
-            percentage_score = int((score / total_questions) * 100)
-
-            return render(request, 'final_score.html', context={'percentage_score': percentage_score, 'quiz_code':quiz_code})
-
-        # Prepare context for rendering quiz display template
+            choices = question.pop('choices')
+            question["choices"]=choices
+            choices_data = [choice_text["choice_text"] for choice_text in choices]
+            random.shuffle(choices_data)
+            question["choices_data"]= choices_data
 
         context = {
             'quiz_code': quiz_code,
@@ -230,8 +172,35 @@ def quiz(request, quiz_code):
             'quiz_creation_date': quiz_data['quiz_creation_date'],
             'quiz_creator_name': quiz_data['quiz_creator_name']
         }
-        return render(request, 'quiz.html', context)
 
+        if request.method == 'POST':
+            selected_choices = {}
+            score = 0
+            total_questions = len(questions_data)
+
+            for question_data in questions_data:
+                question_text = question_data['question']
+                correct_answer = None
+
+                for choice in question_data['choices']:
+                    if choice["is_correct"]:
+                        correct_answer = choice["choice_text"]
+
+                selected_answer = request.POST.get(question_text)
+
+                if selected_answer:
+                    selected_choices[question_text] = selected_answer
+                    if selected_answer == correct_answer:
+                        score += 1
+
+            if total_questions == 0:
+                total_questions = 1
+
+            percentage_score = int((score / total_questions) * 100)
+
+            return render(request, 'final_score.html', context={'percentage_score': percentage_score, 'quiz_code': quiz_code})
+
+        return render(request, 'quiz.html', context)
     else:
         return HttpResponse(f"Failed to fetch quiz data. Status code: {response.status_code}",
                             status=response.status_code)
