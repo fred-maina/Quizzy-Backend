@@ -67,7 +67,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
                 password: password
             };
 
-            return fetch('/authenticate/login/', {
+            return fetch('/authenticate/auth/token/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     };
 
     // Perform login request
-    fetch('/authenticate/login/', {
+    fetch('/authenticate/auth/token/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
