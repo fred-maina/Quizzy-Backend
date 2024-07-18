@@ -163,6 +163,7 @@ BASE_URL = 'https://quizzy-397771394376.herokuapp.com'
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://quizzy-frontend-three.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
