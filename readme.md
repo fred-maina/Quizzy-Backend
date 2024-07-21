@@ -4,7 +4,7 @@
 
 The Quizzy Django application allows users to create, manage, and take quizzes. It uses Django for the backend, with JWT authentication to secure endpoints. Users can add new quizzes, view quizzes, and take quizzes to get their scores.
 ## Preview
-You can preview Quizzy <a href="https://quizzy-397771394376.herokuapp.com/">Here.</a>
+You can preview Quizzy <a href="https://fchege04.pythonanywhere.com/">Here.</a>
 ## Features
 
 - **User Authentication**: Secure access to quiz management through JWT.
