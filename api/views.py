@@ -14,10 +14,11 @@ def get_user_info(request):
     user_id = request.user.id
     names = request.user.first_name + " " + request.user.last_name
     email = request.user.email
+    quiz_details=[]
     user_quizzes=Quiz.objects.filter(created_by_id=request.user.id)
-
-    print(user_quizzes)
-    response = {"id": user_id, "names": names, "email": email}
+    for quizz in user_quizzes:
+        quiz_details.append({"quiz_title":quizz.title, "quiz_code": quizz.code})
+    response = {"id": user_id, "names": names, "email": email, "quiz_details": quiz_details}
     return Response(response)
 
 
