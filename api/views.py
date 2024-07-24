@@ -5,7 +5,16 @@ from .models import Quiz, Question, Choice
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.models import User
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user(request):
+    names = request.user.first_name + " " + request.user.last_name
+    email = request.user.email
+    response = {"names": names, "email": email}
+    return Response(response)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
