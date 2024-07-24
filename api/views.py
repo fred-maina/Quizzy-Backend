@@ -10,10 +10,13 @@ from django.contrib.auth.models import User
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user(request):
+def get_user_info(request):
     user_id = request.user.id
     names = request.user.first_name + " " + request.user.last_name
     email = request.user.email
+    user_quizzes=Quiz.objects.filter(created_by_id=request.user.id)
+
+    print(user_quizzes)
     response = {"id": user_id, "names": names, "email": email}
     return Response(response)
 
