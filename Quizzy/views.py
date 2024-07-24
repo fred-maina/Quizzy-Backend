@@ -61,7 +61,7 @@ def dashboard(request):
 
 
 @csrf_exempt
-# @jwt_auth_required
+@jwt_auth_required
 def add(request):
     if request.method == 'POST':
         try:
