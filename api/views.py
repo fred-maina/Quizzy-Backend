@@ -11,10 +11,12 @@ from django.contrib.auth.models import User
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user(request):
+    user_id = request.user.id
     names = request.user.first_name + " " + request.user.last_name
     email = request.user.email
-    response = {"names": names, "email": email}
+    response = {"id": user_id, "names": names, "email": email}
     return Response(response)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -51,6 +53,7 @@ def quizzes(request):
             'quizzes': quizzes_data
         }
         return Response(response_data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -189,6 +192,7 @@ def update_question(request, quiz_code):
                 )
 
     return Response({'message': 'Questions and choices updated successfully'}, status=status.HTTP_200_OK)
+
 
 @api_view(['DELETE'])
 #@permission_classes([IsAuthenticated])
