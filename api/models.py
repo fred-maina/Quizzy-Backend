@@ -45,3 +45,9 @@ class Choice(models.Model):
         if self.is_correct:
             Choice.objects.filter(question=self.question).exclude(pk=self.pk).update(is_correct=False)
         super().save(*args, **kwargs)
+
+
+class Dashboard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Dashboard_user")
+    score = models.IntegerField()
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
