@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Quiz, Question, Choice
+from .models import Quiz, Question, Choice, Score
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -26,3 +26,14 @@ class QuizSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         quiz = Quiz.objects.create(**validated_data)
         return quiz
+
+
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        models = Score
+        fields = ('user', 'score', 'quiz')
+    def create(self, validated_data):
+        score = Score.objects.create(**validated_data)
+        return score
+
+
