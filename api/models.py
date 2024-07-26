@@ -47,7 +47,7 @@ class Choice(models.Model):
         super().save(*args, **kwargs)
 
 
-class Dashboard(models.Model):
+class Score(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Dashboard_user")
     score = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
