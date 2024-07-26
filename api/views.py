@@ -18,7 +18,7 @@ def get_user_info(request):
     user_quizzes = Quiz.objects.filter(created_by_id=request.user.id)
     for quizz in user_quizzes:
         quiz_details.append(
-            {"quiz_title": quizz.title, "quiz_code": quizz.code, "quiz_creation_date": quizz.date_created.strftime('%Y-%m-%d')})
+            {"quiz_title": quizz.title, "quiz_code": quizz.code, "quiz_creation_date": quizz.date_created})
     response = {"id": user_id, "names": names, "email": email, "quiz_details": quiz_details}
     return Response(response)
 
