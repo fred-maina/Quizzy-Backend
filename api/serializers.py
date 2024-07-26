@@ -32,8 +32,7 @@ class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         models = Score
         fields = ('user', 'score', 'quiz')
+
     def create(self, validated_data):
         score = Score.objects.create(**validated_data)
         return score
-
-
