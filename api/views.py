@@ -14,10 +14,11 @@ def get_user_info(request):
     user_id = request.user.id
     names = request.user.first_name + " " + request.user.last_name
     email = request.user.email
-    quiz_details=[]
-    user_quizzes=Quiz.objects.filter(created_by_id=request.user.id)
+    quiz_details = []
+    user_quizzes = Quiz.objects.filter(created_by_id=request.user.id)
     for quizz in user_quizzes:
-        quiz_details.append({"quiz_title":quizz.title, "quiz_code": quizz.code})
+        quiz_details.append(
+            {"quiz_title": quizz.title, "quiz_code": quizz.code, "quiz_creation_date": quizz.date_created.strftime('%Y-%m-%d')})
     response = {"id": user_id, "names": names, "email": email, "quiz_details": quiz_details}
     return Response(response)
 
@@ -151,20 +152,21 @@ def create(request):
     else:
         return Response(quiz_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])  # Ensure user is authenticated
 def update_question(request, quiz_code):
     # Fetch the quiz based on the provided quiz code
     quiz = get_object_or_404(Quiz, code=quiz_code)
-    
+
     data = request.data
 
     # Update questions and choices
     questions_data = data.get('questions', [])
-    
+
     for question_data in questions_data:
         question_id = question_data.get('id', None)
-        
+
         if question_id:
             # Update existing question
             question = get_object_or_404(Question, id=question_id, quiz=quiz)
@@ -177,7 +179,7 @@ def update_question(request, quiz_code):
                 quiz=quiz,
                 question_text=question_data.get('question', '')
             )
-        
+
         # Update or add choices
         choices_data = question_data.get('choices', [])
         for choice_data in choices_data:
