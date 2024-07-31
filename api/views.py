@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Quiz, Question, Choice
-from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer
+from .models import Quiz, Question, Choice, Score
+from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, ScoreSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
@@ -210,3 +210,28 @@ def delete_quiz(request, quiz_code):
 
     quiz.delete()
     return Response({"detail": "Quiz deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def results(request):
+    quiz_code = request.data.get("quiz_code")
+    score = request.data.get("score")
+
+    if not quiz_code or not score:
+        return Response(
+            {"error": "Quiz code and score are required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        quiz = get_object_or_404(Quiz, code=quiz_code)
+        Score.objects.create(
+            quiz=quiz,
+            score=score,
+            user=request.user
+        )
+        return Response({"message": "Score saved successfully"}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
