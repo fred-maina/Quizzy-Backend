@@ -158,7 +158,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-BASE_URL = 'https://quizzy-397771394376.herokuapp.com'
+BASE_URL = 'http://127.0.0.1:8000/'
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
