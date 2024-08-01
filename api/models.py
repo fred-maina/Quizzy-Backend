@@ -51,3 +51,4 @@ class Score(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Dashboard_user")
     score = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    date_taken = models.DateTimeField(auto_now_add=True)
