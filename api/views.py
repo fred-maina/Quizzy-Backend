@@ -15,11 +15,19 @@ def get_user_info(request):
     names = request.user.first_name + " " + request.user.last_name
     email = request.user.email
     quiz_details = []
+    number_of_people = 0;
+
     user_quizzes = Quiz.objects.filter(created_by_id=request.user.id)
     for quizz in user_quizzes:
+        number_of_people = + Score.objects.filter(quiz=quizz).count()
+
         quiz_details.append(
-            {"quiz_title": quizz.title, "quiz_code": quizz.code, "quiz_creation_date": quizz.date_created})
-    response = {"id": user_id, "names": names, "email": email, "quiz_details": quiz_details}
+            {"quiz_title": quizz.title,
+             "quiz_code": quizz.code,
+             "quiz_creation_date": quizz.date_created
+             })
+    response = {"id": user_id, "names": names, "email": email, "quiz_details": quiz_details,
+                "number_of_people": number_of_people}
     return Response(response)
 
 
@@ -79,6 +87,10 @@ def questions_by_quiz(request, quiz_code):
         quiz = Quiz.objects.get(code=quiz_code)
     except Quiz.DoesNotExist:
         return Response({'error': 'Quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+    if request.user == quiz.created_by:
+        Leaderboard = Score.objects.filter(quiz=quiz)
+        for score in Leaderboard:
+            print(score.score)
 
     questions = Question.objects.filter(quiz=quiz)
     quiz_creation_date = quiz.date_created.strftime('%Y-%m-%d')
@@ -210,13 +222,15 @@ def delete_quiz(request, quiz_code):
 
     quiz.delete()
     return Response({"detail": "Quiz deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def results(request):
     quiz_code = request.data.get("quiz_code")
     score = request.data.get("score")
 
-    if not quiz_code or not score:
+    if not quiz_code or score is None:
         return Response(
             {"error": "Quiz code and score are required."},
             status=status.HTTP_400_BAD_REQUEST
