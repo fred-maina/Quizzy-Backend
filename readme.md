@@ -16,7 +16,8 @@ The Quizzy Django application allows users to create, manage, and take quizzes. 
 - Django 3.x or later
 - Django REST Framework
 - Requests library
-
+- Whitenoise
+-Gunicorn
 ## Installation
 
 1. **Clone the repository**:
