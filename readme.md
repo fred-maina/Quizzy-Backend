@@ -1,9 +1,10 @@
 # Quizzy Django Application
-
+## Preview
+You can preview the Quizzy Application here <a href="https://quizzy-frontend-three.vercel.app/"> here. <a/>
 ## Overview
 
 The Quizzy Django application allows users to create, manage, and take quizzes. It uses Django for the backend, with JWT authentication to secure endpoints. Users can add new quizzes, view quizzes, and take quizzes to get their scores.
-
+The application uses a React Front-end view the frontend code <a href="https://github.com/fred-maina/QuizzyFrontend">here.</a>
 ## Features
 
 - **User Authentication**: Secure access to quiz management through JWT.
