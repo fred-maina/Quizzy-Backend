@@ -1,6 +1,6 @@
 # urls.py
 from django.urls import path
-from .views import quizzes, quiz_detail, questions_by_quiz, create, delete_quiz , update_question, get_user_info, results
+from .views import quizzes, quiz_detail, questions_by_quiz, create, delete_quiz , update_question, get_user_info, results,scores
 
 urlpatterns = [
     path('quizzes/', quizzes, name='quizzes'),
@@ -11,5 +11,6 @@ urlpatterns = [
     path('quizzes/<str:quiz_code>/delete/', delete_quiz, name='delete-quiz'),
     path('quizzes/<str:quiz_code>/patch/', update_question, name="update_question"),
     path("results/", results, name="results"),
+    path('score/<str:quiz_code>/',scores,name='scores')
 
 ]
