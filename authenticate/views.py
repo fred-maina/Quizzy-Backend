@@ -20,7 +20,6 @@ def register(request):
         print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @csrf_exempt
 @api_view(['POST'])
 def login(request):
