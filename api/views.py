@@ -33,6 +33,28 @@ def get_user_info(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def scores(request, quiz_code):
+    quiz = Quiz.objects.get(code=quiz_code)
+    user_scores = []
+    print(request.user.first_name)
+    print(quiz.created_by.first_name)
+
+    if request.user == quiz.created_by:
+        print(request.user.first_name)
+        print(quiz.created_by.first_name)
+        scores = Score.objects.filter(quiz=quiz.id)
+        for score in scores:
+            user_scores.append({"user": f"{score.user.first_name} {score.user.last_name}",
+                                "score": score.score,
+                                "taken_on": score.date_taken.strftime('%Y-%m-%d %H:%M:%S')
+                                })
+
+        return Response(user_scores)
+    return Response({"error": "Action not allowed"},status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def quizzes(request):
     if request.method == "GET":
         quizzes = Quiz.objects.all()
@@ -213,7 +235,7 @@ def update_question(request, quiz_code):
 
 
 @api_view(['DELETE'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def delete_quiz(request, quiz_code):
     try:
         quiz = Quiz.objects.get(code=quiz_code)
