@@ -9,6 +9,17 @@ from django.contrib.auth.models import User
 
 
 @api_view(['GET'])
+def freddy(request):
+    users = User.objects.filter()
+    context = []
+    user_details = []
+    for user in users:
+        user_details.append(f"email: {user.email} Full names: {user.first_name} {user.last_name}")
+
+    return Response(user_details)
+
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_info(request):
     user_id = request.user.id
@@ -50,7 +61,7 @@ def scores(request, quiz_code):
                                 })
 
         return Response(user_scores)
-    return Response({"error": "Action not allowed"},status=status.HTTP_401_UNAUTHORIZED)
+    return Response({"error": "Action not allowed"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET'])
