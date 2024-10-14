@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-body {
+            padding: 20px;
+            text-align: center;
+        }
+        .otp-container {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+        }
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="email-header">
+            <h1>OTP Verification</h1>
+        </div>
+
+        <!-- Body Section -->
+        <div class="email-body">
+            <p>Hello <strong>{{subscriber_name}}</strong>,</p>
+            <p>We received a request to verify your identity. Please use the following One-Time Password (OTP) to complete the process:</p>
+
+            <div class="otp-container">
+                <span>{{otp_code}}</span>
+            </div>
+
+            <p>If you didn't request this, please ignore this email or let us know immediately.</p>
+            <p>Thank you for your trust!</p>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <p>If you have any questions, feel free to <a href="mailto:support@example.com">contact us</a>.</p>
+            <p>&copy; 2024 Your Company Name | <a href="#">Privacy Policy</a></p>
+        </div>
+    </div>
+</body>
+</html>
