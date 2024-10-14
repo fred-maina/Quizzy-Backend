@@ -12,10 +12,22 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail SMTP server
+EMAIL_PORT = 587  # TLS port for Gmail
+EMAIL_USE_TLS = True  # Enable TLS encryption
+EMAIL_HOST_USER = os.getenv('USER')  # Correct email address
+EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')  # Your app-specific password
+DEFAULT_FROM_EMAIL = 'fchege04@gmail.com'  # Default from email
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -27,7 +39,6 @@ SECRET_KEY = "django-insecure-asf@^mz6t&@n+3hath^&#*j9bzufsb!&5j^q7(qb-s!5dn)7!@
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -42,8 +53,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'api',
-    'authenticate',
-    'Quizzy',
+    'authenticate'
 ]
 
 LOGIN_URL = '/login/'
@@ -80,6 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "quizzyApi.wsgi.application"
 
+AUTH_USER_MODEL = 'authenticate.CustomUser'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -90,7 +101,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -135,7 +145,6 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -146,7 +155,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
