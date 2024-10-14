@@ -1,8 +1,7 @@
 from django.db import models
 import random
 import string
-from django.contrib.auth.models import User  # Import Django's User model
-
+from django.conf import settings  # Import settings to dynamically refer to the custom user model
 
 def generate_unique_alphanumeric_code(length=6):
     """A function that generates a unique code that will be displayed back to the user."""
@@ -17,7 +16,7 @@ class Quiz(models.Model):
     description = models.TextField(blank=True)
     code = models.CharField(max_length=6, default=generate_unique_alphanumeric_code, editable=False, unique=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # Added ForeignKey to User
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,blank=True,null=True)  # Use settings.AUTH_USER_MODEL
 
     def __str__(self):
         return str(self.title)
