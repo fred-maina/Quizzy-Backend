@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'api',
-    'authenticate',
-    'Quizzy',
+    'authenticate'
 ]
 
 LOGIN_URL = '/login/'
